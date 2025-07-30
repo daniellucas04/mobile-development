@@ -1,24 +1,31 @@
 void main() {
-  DateTime data = DateTime.now();
-  DateTime inicio = DateTime(data.year, data.month, 1);
+  DateTime now = DateTime.now();
 
-  print('D | S | T | Q | Q | S | S');
+  DateTime inicioMes = DateTime(now.year, now.month, 1);
+  DateTime fimMes = DateTime(now.year, now.month + 1, 0);
 
-  int diaMes = 1;
-  String semana = '';
+  int ultimoDiaDoMes = fimMes.day;
+  int primeiroDiaDaSemana = inicioMes.weekday % 7;
 
-  for (var i = 1; i <= DateTime.now().day; i++) {
-    for (var diaSemana = 0; diaSemana < 6; diaSemana++) {
-      if (diaSemana >= inicio.weekday) {
-        semana += '$diaMes | ';
-        diaMes++;
-      } else {
-        semana += '  | ';
-      }
-    }
-    ;
-    semana += '\n';
+  String calendario = '| D | S | T | Q | Q | S | S |\n';
+
+  for (int i = 0; i < primeiroDiaDaSemana; i++) {
+    calendario += '    ';
   }
 
-  print(semana);
+  int diaAtual = 1;
+  for (int i = primeiroDiaDaSemana; i <= DateTime.now().day + 1; i++) {
+    calendario += ' ${diaAtual.toString().padLeft(2)} ';
+    diaAtual++;
+
+    if ((i + 1) % 7 == 0) {
+      calendario += '\n';
+    }
+  }
+
+  if ((ultimoDiaDoMes + primeiroDiaDaSemana) % 7 != 0) {
+    calendario += '';
+  }
+
+  print(calendario);
 }
