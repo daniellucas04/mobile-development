@@ -1,4 +1,4 @@
 void main() {
-  DateTime atual = DateTime.now();
-  print(atual.month);
+  int atual = DateTime.now().month;
+  print(atual);
 }
