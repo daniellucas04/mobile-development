@@ -3,16 +3,16 @@ class Task {
   String title;
   String description;
   String status;
-  DateTime createdAt;
-  DateTime updatedAt;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
   Task({
     this.id,
     required this.title,
     required this.description,
     required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
   });
 
   Map<String, Object?> toMap() {

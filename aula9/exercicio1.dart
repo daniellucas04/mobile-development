@@ -6,10 +6,7 @@ void main() {
   runApp(const MyApp());
 }
 
-enum Animal {
-  cat,
-  dog,
-}
+enum Animal { cat, dog }
 
 const double height = 80.0;
 const Color fundo = Color(0xFF1E164B);
@@ -118,13 +115,8 @@ class _MyAppState extends State<MyApp> {
                         filho: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.pets,
-                              size: 80,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
+                            Icon(Icons.pets, size: 80),
+                            SizedBox(height: 15),
                             Text(
                               'Gato',
                               style: TextStyle(
@@ -147,17 +139,14 @@ class _MyAppState extends State<MyApp> {
                         filho: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(
-                              Icons.pets,
-                              size: 80,
-                            ),
-                            SizedBox(
-                              height: 15,
-                            ),
+                            Icon(Icons.pets, size: 80),
+                            SizedBox(height: 15),
                             Text(
                               'Cachorro',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white),
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Colors.white,
+                              ),
                             ),
                           ],
                         ),
@@ -188,8 +177,9 @@ class _MyAppState extends State<MyApp> {
                             children: [
                               TextButton(
                                 style: ButtonStyle(
-                                  foregroundColor:
-                                      WidgetStatePropertyAll(Colors.grey),
+                                  foregroundColor: WidgetStatePropertyAll(
+                                    Colors.grey,
+                                  ),
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -197,15 +187,13 @@ class _MyAppState extends State<MyApp> {
                                     _calculateHumanAge(idade, 0);
                                   });
                                 },
-                                child: Icon(
-                                  Icons.add,
-                                  size: 30,
-                                ),
+                                child: Icon(Icons.add, size: 30),
                               ),
                               TextButton(
                                 style: ButtonStyle(
-                                  foregroundColor:
-                                      WidgetStatePropertyAll(Colors.grey),
+                                  foregroundColor: WidgetStatePropertyAll(
+                                    Colors.grey,
+                                  ),
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -216,13 +204,10 @@ class _MyAppState extends State<MyApp> {
                                     _calculateHumanAge(idade, 0);
                                   });
                                 },
-                                child: Icon(
-                                  Icons.remove,
-                                  size: 30,
-                                ),
+                                child: Icon(Icons.remove, size: 30),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -241,7 +226,9 @@ class _MyAppState extends State<MyApp> {
                                 Text(
                                   'Idade',
                                   style: TextStyle(
-                                      fontSize: 24, color: Colors.grey),
+                                    fontSize: 24,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 Text(
                                   idade.toStringAsFixed(0),
@@ -253,8 +240,9 @@ class _MyAppState extends State<MyApp> {
                                   children: [
                                     TextButton(
                                       style: ButtonStyle(
-                                        foregroundColor:
-                                            WidgetStatePropertyAll(Colors.grey),
+                                        foregroundColor: WidgetStatePropertyAll(
+                                          Colors.grey,
+                                        ),
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -262,15 +250,13 @@ class _MyAppState extends State<MyApp> {
                                           _calculateHumanAge(idade, peso);
                                         });
                                       },
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 30,
-                                      ),
+                                      child: Icon(Icons.add, size: 30),
                                     ),
                                     TextButton(
                                       style: ButtonStyle(
-                                        foregroundColor:
-                                            WidgetStatePropertyAll(Colors.grey),
+                                        foregroundColor: WidgetStatePropertyAll(
+                                          Colors.grey,
+                                        ),
                                       ),
                                       onPressed: () {
                                         setState(() {
@@ -281,13 +267,10 @@ class _MyAppState extends State<MyApp> {
                                           _calculateHumanAge(idade, peso);
                                         });
                                       },
-                                      child: Icon(
-                                        Icons.remove,
-                                        size: 30,
-                                      ),
+                                      child: Icon(Icons.remove, size: 30),
                                     ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -301,11 +284,11 @@ class _MyAppState extends State<MyApp> {
                                 Text(
                                   'Peso',
                                   style: TextStyle(
-                                      fontSize: 24, color: Colors.grey),
+                                    fontSize: 24,
+                                    color: Colors.grey,
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: 15,
-                                ),
+                                SizedBox(height: 15),
                                 Text(
                                   peso.toStringAsFixed(2),
                                   style: TextStyle(fontSize: 24),
@@ -325,15 +308,13 @@ class _MyAppState extends State<MyApp> {
                                     min: 5,
                                     max: 100,
                                     onChanged: (value) {
-                                      setState(
-                                        () {
-                                          peso = value;
-                                          _calculateHumanAge(idade, peso);
-                                        },
-                                      );
+                                      setState(() {
+                                        peso = value;
+                                        _calculateHumanAge(idade, peso);
+                                      });
                                     },
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -357,7 +338,7 @@ class _MyAppState extends State<MyApp> {
                           Text(
                             resultado.toStringAsFixed(2),
                             style: TextStyle(fontSize: 24),
-                          )
+                          ),
                         ],
                       ),
                     ),

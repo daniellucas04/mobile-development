@@ -11,7 +11,7 @@ void main() async {
     join(await getDatabasesPath(), 'calculadora.db'),
     onCreate: (db, version) {
       return db.execute('''
-        CREATE TABLE dados(id INTEGER PRIMARY KEY AUTO_INCREMENT, screen TEXT, memory TEXT);
+        CREATE TABLE dados(id INTEGER PRIMARY KEY, screen TEXT, memory TEXT);
         ''');
     },
     version: 1,
