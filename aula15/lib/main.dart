@@ -36,7 +36,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController urlController = TextEditingController();
   String? title;
+  String wordExplanation = '';
   List<String> paragraph = [];
+
+  /// Lista de palavras clicadas
+  List<String> clickedWords = [];
 
   @override
   Widget build(BuildContext context) {
@@ -97,12 +101,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             SizedBox(height: 40),
-            Center(
+            SizedBox(
+              height: 450,
               child: Card(
                 child: Padding(
                   padding: const EdgeInsets.all(20),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
@@ -110,31 +114,41 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(fontSize: 24),
                       ),
                       Divider(),
-                      // Torna o conteúdo abaixo do título rolável
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Wrap(
-                              alignment: WrapAlignment.start,
-                              runSpacing: 10,
-                              spacing: 10,
-                              children: paragraph.map((item) {
-                                return ActionChip.elevated(
-                                  onPressed: () async {
-                                    await _wordAlert(
-                                      item,
-                                    ); // Passando a palavra clicada
-                                  },
-                                  label: Text(
-                                    item,
-                                    style: TextStyle(fontSize: 16),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Wrap(
+                            alignment: WrapAlignment.start,
+                            runSpacing: 10,
+                            spacing: 10,
+                            children: paragraph.map((item) {
+                              final isClicked = clickedWords.contains(item);
+
+                              return ActionChip(
+                                onPressed: () async {
+                                  setState(() {
+                                    if (!clickedWords.contains(item)) {
+                                      clickedWords.add(item);
+                                    }
+                                  });
+
+                                  await _wordAlert(item);
+                                },
+                                label: Text(
+                                  item,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: isClicked
+                                        ? Colors.white
+                                        : Colors.black,
                                   ),
-                                  elevation: 1,
-                                );
-                              }).toList(),
-                            ),
-                          ],
+                                ),
+                                backgroundColor: isClicked
+                                    ? Colors.deepPurple
+                                    : Colors.grey.shade200,
+                                elevation: isClicked ? 4 : 1,
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ],
@@ -155,12 +169,11 @@ class _MyHomePageState extends State<MyHomePage> {
     var response = await http.get(baseWikiUrl);
     final document = parse(response.body);
 
-    final titleElement = document.querySelector('.mw-page-title-main');
+    final titleElement = document.querySelector('.mw-first-heading');
     final paragraphs = document.querySelectorAll('#mw-content-text p');
 
     String? firstParagraph;
 
-    // Encontrando o primeiro parágrafo não vazio
     for (final p in paragraphs) {
       final text = p.text.trim();
       if (text.isNotEmpty) {
@@ -172,10 +185,12 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       title = titleElement?.text ?? 'Título não encontrado';
       paragraph = firstParagraph?.split(RegExp(r'\s+')) ?? [];
+      clickedWords = []; // limpa estado ao buscar novo texto
     });
   }
 
-  _wordAlert(String word) {
+  _wordAlert(String word) async {
+    await _wordExplanation(word);
     return showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -185,36 +200,40 @@ class _MyHomePageState extends State<MyHomePage> {
             borderRadius: BorderRadius.circular(14),
           ),
           title: Text(word),
-          content: Text('Word explanation', style: TextStyle(fontSize: 16)),
+          content: Text(wordExplanation),
           actions: [
             Flex(
-              spacing: 12,
+              spacing: 8,
               direction: Axis.horizontal,
               children: [
-                FilledButton.icon(
-                  onPressed: () {},
-                  label: Text(
-                    'Não entendi',
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  style: ButtonStyle(
-                    side: MaterialStateProperty.all(BorderSide(width: 1)),
-                    backgroundColor: MaterialStateProperty.all(
-                      Colors.transparent,
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    label: Text(
+                      'Voltar',
+                      style: TextStyle(color: Colors.black),
                     ),
+                    style: ButtonStyle(
+                      side: WidgetStateProperty.all(BorderSide(width: 1)),
+                      backgroundColor: WidgetStateProperty.all(
+                        Colors.transparent,
+                      ),
+                    ),
+                    icon: Icon(Icons.arrow_back, color: Colors.black),
                   ),
-                  icon: Icon(Icons.refresh_rounded, color: Colors.black),
                 ),
-                FilledButton.icon(
-                  onPressed: () {},
-                  label: Text(
-                    'Entendi',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: () => Navigator.pop(context),
+                    label: Text(
+                      'Entendi',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStateProperty.all(Colors.green),
+                    ),
+                    icon: Icon(Icons.check_circle_outline),
                   ),
-                  style: ButtonStyle(
-                    backgroundColor: MaterialStateProperty.all(Colors.green),
-                  ),
-                  icon: Icon(Icons.check_circle_outline),
                 ),
               ],
             ),
@@ -222,5 +241,27 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  _wordExplanation(word) async {
+    var baseUrl = Uri.parse(
+      'https://api.dictionaryapi.dev/api/v2/entries/en/$word',
+    );
+
+    var response = await http.get(baseUrl);
+    var data = jsonDecode(response.body);
+
+    if (data is List) {
+      // Resposta válida
+      setState(() {
+        wordExplanation =
+            data[0]['meanings'][0]['definitions'][0]['definition'];
+      });
+    } else {
+      // Resposta de erro da API
+      setState(() {
+        wordExplanation = data['message'] ?? 'No definition found.';
+      });
+    }
   }
 }
